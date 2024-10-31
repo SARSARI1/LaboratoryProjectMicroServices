@@ -2,13 +2,18 @@ package com.labo.laboratoire.Services;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import com.labo.laboratoire.Entities.Utilisateur; // Update the package name accordingly
 
 import com.labo.laboratoire.Entities.Laboratoire;
 import com.labo.laboratoire.Entities.FullLaboratoireResponse;
 import com.labo.laboratoire.Repositories.LaboratoireRepository;
-import com.labo.laboratoire.UtilisateurClient;
+import com.labo.laboratoire.Client.UtilisateurClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.labo.laboratoire.DTOs.FullLaboratoireResponseDTO;
+import com.labo.laboratoire.DTOs.LaboratoireDTO;
+import com.labo.laboratoire.DTOs.UtilisateurDTO;
 
 @Service
 public class LaboratoireService {
@@ -23,37 +28,72 @@ public class LaboratoireService {
         this.client = client;
     }
 
-    public List<Laboratoire> findAllLaboratoires() {
-        return repository.findAll();
+    public List<LaboratoireDTO> findAllLaboratoires() {
+        return repository.findAll().stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
     }
 
-    public Optional<Laboratoire> getLaboratoireById(Long id) {
-        return repository.findById(id);
+    public Optional<LaboratoireDTO> getLaboratoireById(Long id) {
+        return repository.findById(id).map(this::mapToDTO);
     }
 
-    public Laboratoire saveLaboratoire(Laboratoire laboratoire) {
-        return repository.save(laboratoire);
+    public LaboratoireDTO saveLaboratoire(LaboratoireDTO laboratoireDTO) {
+        Laboratoire laboratoire = mapToEntity(laboratoireDTO);
+        return mapToDTO(repository.save(laboratoire));
     }
 
     public void deleteLaboratoire(Long id) {
         repository.deleteById(id);
     }
 
-    public FullLaboratoireResponse findLaboratoiresWithUtilisateurs(Long laboratoireId) {
-        var laboratoire = repository.findById(laboratoireId)
-                .orElse(Laboratoire.builder()
-                        .nom("Not Found")
-                        .logo("not found")
-                        .nrc("not found")
-                        .build());
+    public FullLaboratoireResponseDTO findLaboratoiresWithUtilisateurs(Long laboratoireId) {
+        Laboratoire laboratoire = repository.findById(laboratoireId)
+                .orElseThrow(() -> new RuntimeException("Laboratoire not found"));
 
-        var utilisateurs = client.findAllUsersByLaboratoire(laboratoireId); // Find all users from the user service
+        List<UtilisateurDTO> utilisateurs = client.findAllUsersByLaboratoire(laboratoireId)
+                .stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
 
-        return FullLaboratoireResponse.builder()
+        return FullLaboratoireResponseDTO.builder()
+                .laboratoire(mapToDTO(laboratoire))
+                .utilisateurs(utilisateurs)
+                .build();
+    }
+
+    private LaboratoireDTO mapToDTO(Laboratoire laboratoire) {
+        return LaboratoireDTO.builder()
+                .id(laboratoire.getId())
                 .nom(laboratoire.getNom())
                 .logo(laboratoire.getLogo())
                 .nrc(laboratoire.getNrc())
-                .utilisateurs(utilisateurs) // Set utilisateurs here
+                .active(laboratoire.isActive())
+                .dateActivation(laboratoire.getDateActivation())
+                .build();
+    }
+
+    private Laboratoire mapToEntity(LaboratoireDTO laboratoireDTO) {
+        return Laboratoire.builder()
+                .id(laboratoireDTO.getId())
+                .nom(laboratoireDTO.getNom())
+                .logo(laboratoireDTO.getLogo())
+                .nrc(laboratoireDTO.getNrc())
+                .active(laboratoireDTO.isActive())
+                .dateActivation(laboratoireDTO.getDateActivation())
+                .build();
+    }
+
+    private UtilisateurDTO mapToDTO(Utilisateur utilisateur) {
+        return UtilisateurDTO.builder()
+                .email(utilisateur.getEmail())
+                .fkIdLaboratoire(utilisateur.getFkIdLaboratoire())
+                .imageurl(utilisateur.getImageurl())
+                .nomComplet(utilisateur.getNomComplet())
+                .profession(utilisateur.getProfession())
+                .numTel(utilisateur.getNumTel())
+                .signature(utilisateur.getSignature())
+                .role(utilisateur.getRole())
                 .build();
     }
 }

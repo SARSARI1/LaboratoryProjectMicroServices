@@ -3,8 +3,8 @@ package com.labo.laboratoire.Controllers;
 import java.util.List;
 import java.util.Optional;
 
-import com.labo.laboratoire.Entities.Laboratoire;
-import com.labo.laboratoire.Entities.FullLaboratoireResponse;
+import com.labo.laboratoire.DTOs.FullLaboratoireResponseDTO;
+import com.labo.laboratoire.DTOs.LaboratoireDTO;
 import com.labo.laboratoire.Services.LaboratoireService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,39 +21,39 @@ public class LaboratoireController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void save(@RequestBody Laboratoire laboratoire) {
-        service.saveLaboratoire(laboratoire);
+    public void save(@RequestBody LaboratoireDTO laboratoireDTO) {
+        service.saveLaboratoire(laboratoireDTO);
     }
 
     @GetMapping
-    public ResponseEntity<List<Laboratoire>> findAllLaboratoires() {
+    public ResponseEntity<List<LaboratoireDTO>> findAllLaboratoires() {
         return ResponseEntity.ok(service.findAllLaboratoires());
     }
 
     @GetMapping("/with-utilisateurs/{laboratoire-id}")
-    public ResponseEntity<FullLaboratoireResponse> findAllLaboratoires(@PathVariable("laboratoire-id") Long laboratoireId) {
+    public ResponseEntity<FullLaboratoireResponseDTO> findAllLaboratoires(@PathVariable("laboratoire-id") Long laboratoireId) {
         return ResponseEntity.ok(service.findLaboratoiresWithUtilisateurs(laboratoireId));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Laboratoire> getLaboratoireById(@PathVariable Long id) {
-        Optional<Laboratoire> laboratoire = service.getLaboratoireById(id);
-        return laboratoire.map(ResponseEntity::ok)
+    public ResponseEntity<LaboratoireDTO> getLaboratoireById(@PathVariable Long id) {
+        Optional<LaboratoireDTO> laboratoireDTO = service.getLaboratoireById(id);
+        return laboratoireDTO.map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Laboratoire> updateLaboratoire(@PathVariable Long id, @RequestBody Laboratoire laboratoireDetails) {
-        Optional<Laboratoire> optionalLaboratoire = service.getLaboratoireById(id);
-        if (optionalLaboratoire.isPresent()) {
-            Laboratoire laboratoire = optionalLaboratoire.get();
-            laboratoire.setNom(laboratoireDetails.getNom());
-            laboratoire.setLogo(laboratoireDetails.getLogo());
-            laboratoire.setNrc(laboratoireDetails.getNrc());
-            laboratoire.setActive(laboratoireDetails.isActive());
-            laboratoire.setDateActivation(laboratoireDetails.getDateActivation());
-            Laboratoire updatedLaboratoire = service.saveLaboratoire(laboratoire);
-            return ResponseEntity.ok(updatedLaboratoire);
+    public ResponseEntity<LaboratoireDTO> updateLaboratoire(@PathVariable Long id, @RequestBody LaboratoireDTO laboratoireDetails) {
+        Optional<LaboratoireDTO> optionalLaboratoireDTO = service.getLaboratoireById(id);
+        if (optionalLaboratoireDTO.isPresent()) {
+            LaboratoireDTO laboratoireDTO = optionalLaboratoireDTO.get();
+            laboratoireDTO.setNom(laboratoireDetails.getNom());
+            laboratoireDTO.setLogo(laboratoireDetails.getLogo());
+            laboratoireDTO.setNrc(laboratoireDetails.getNrc());
+            laboratoireDTO.setActive(laboratoireDetails.isActive());
+            laboratoireDTO.setDateActivation(laboratoireDetails.getDateActivation());
+            LaboratoireDTO updatedLaboratoireDTO = service.saveLaboratoire(laboratoireDTO);
+            return ResponseEntity.ok(updatedLaboratoireDTO);
         } else {
             return ResponseEntity.notFound().build();
         }

@@ -1,12 +1,13 @@
 package com.labo.utilisateur.Controllers;
 
-import java.util.List;
-
 import com.labo.utilisateur.Entities.Utilisateur;
 import com.labo.utilisateur.Services.UtilisateurService;
+import com.labo.utilisateur.DTO.UtilisateurDTO; // Import the DTO class
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 import lombok.RequiredArgsConstructor;
 
@@ -19,8 +20,8 @@ public class UtilisateurController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Utilisateur save(@RequestBody Utilisateur utilisateur) {
-        return service.saveUser(utilisateur); // Return the saved utilisateur
+    public Utilisateur save(@RequestBody UtilisateurDTO utilisateurDTO) { // Change parameter type to DTO
+        return service.saveUser(utilisateurDTO); // Use the DTO for saving
     }
 
     @GetMapping

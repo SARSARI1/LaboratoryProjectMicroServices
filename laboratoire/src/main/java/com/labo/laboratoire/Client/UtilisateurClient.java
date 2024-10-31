@@ -1,4 +1,4 @@
-package com.labo.laboratoire;
+package com.labo.laboratoire.Client;
 
 import com.labo.laboratoire.Entities.Utilisateur;
 import org.springframework.cloud.openfeign.FeignClient;
