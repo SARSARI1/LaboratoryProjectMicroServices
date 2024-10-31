@@ -1,4 +1,4 @@
-package com.labo.laboratoire;
+package com.labo.laboratoire.Entities;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

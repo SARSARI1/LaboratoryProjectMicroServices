@@ -1,5 +1,4 @@
-package com.labo.laboratoire;
-
+package com.labo.laboratoire.Entities;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -11,8 +10,9 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import java.time.LocalDate;  
-  
+
+import java.time.LocalDate;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -20,9 +20,8 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @Builder
-
 public class Laboratoire {
-@Id
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -36,4 +35,5 @@ public class Laboratoire {
 
     private LocalDate dateActivation;
 
+    // If there are any additional methods or fields from the second project, include them here.
 }

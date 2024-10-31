@@ -1,6 +1,8 @@
-package com.labo.laboratoire;
+package com.labo.laboratoire.Entities;
 import java.time.LocalDate;  
 import java.util.List;
+
+import com.labo.laboratoire.Entities.Utilisateur;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
